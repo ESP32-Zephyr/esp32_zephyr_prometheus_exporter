@@ -3,16 +3,47 @@ package main
 import (
         "net/http"
         "time"
+        "net"
         "fmt"
-        
+        "errors"
+
         "github.com/prometheus/client_golang/prometheus"
         "github.com/prometheus/client_golang/prometheus/promhttp"
 
         "github.com/ESP32-Zephyr/esp32_zephyr_goapi/api"
 )
 
-func getMetrics(transport, ipv4 string, destPort uint16, samplingPeriod time.Duration) {
+func resolveHost(host string) (string, error) {
+    ips, err := net.LookupIP(host)
+    if err != nil {
+        return "", err
+    }
+
+    for _, ip := range ips {
+        if ipv4 := ip.To4(); ipv4 != nil {
+            return ipv4.String(), nil
+        }
+    }
+
+    return "", errors.New("no IPv4 address found")
+}
+
+func getMetrics(transport, host string, destPort uint16, samplingPeriod time.Duration) {
         gaugeAdcChs := []prometheus.Gauge{}
+
+        var ipv4 string
+        var err error
+        for {
+                ipv4, err = resolveHost(host)
+                if err != nil {
+                        fmt.Println("Error resolving host:", err)
+                        time.Sleep(5 * time.Second)
+                        continue
+                } else {
+                       break
+                }
+        }
+        fmt.Println("Found target device on IPv4: ", ipv4)
 
         es32client, err := api.NewEsp32Client(transport, ipv4, destPort)
         if err != nil {
@@ -65,7 +96,7 @@ func getMetrics(transport, ipv4 string, destPort uint16, samplingPeriod time.Dur
 
 func main() {       
         transport := "tcp"
-        hosts := []string{"192.168.0.4"}
+        hosts := []string{"esp32.local"}
         destPort := uint16(4242)
         const samplingPeriod time.Duration = 5 // in seconds
 	
