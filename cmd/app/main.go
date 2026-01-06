@@ -19,17 +19,29 @@ func getMetrics(transport, ipv4 string, destPort uint16, samplingPeriod time.Dur
                 fmt.Println(err)
         }
 
-        adcChs, err := es32client.AdcChsGet()
-        if err != nil {
-                fmt.Println("Error getting ADC channels:", err)
-                return
+        var chs uint32
+        for {
+                adcChs, err := es32client.AdcChsGet()        
+                if err != nil {
+                        fmt.Println("Error getting ADC channels:", err)
+                        // Wait indefinetly until the device responds
+                        time.Sleep(5 * time.Second)
+                } else {
+                        chs = adcChs.GetAdcChs()
+                        fmt.Println("ADC Channels:", chs)                        
+                        if chs == 0 {
+                                fmt.Println("No ADC channels available, retrying...")
+                                time.Sleep(5 * time.Second)
+                                continue
+                        }
+                        break
+                }
         }
-        fmt.Println("ADC Channels:", adcChs.GetAdcChs())
 
-        for ch := range adcChs.GetAdcChs() {
+        for ch := range chs {
                 adcGauge := prometheus.NewGauge(
                         prometheus.GaugeOpts{
-                        Name: fmt.Sprintf("esp32_%s_%d_ch_%d", ipv4, destPort, ch),
+                        Name: fmt.Sprintf("esp32_ch_%d", ch),
                         Help: fmt.Sprintf("ADC channel %d value.", ch),
                         },
                 )
@@ -45,7 +57,6 @@ func getMetrics(transport, ipv4 string, destPort uint16, samplingPeriod time.Dur
                                 fmt.Println("Error reading ADC channel:", err)
                                 continue
                         }
-                        fmt.Printf("ADC Channel %d Value: %d\n", id, adc_val.GetVal())
                         gaugeAdcCh.Set(float64(adc_val.GetVal()))
                 }
                 time.Sleep(samplingPeriod * time.Second)
