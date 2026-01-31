@@ -1,0 +1,11 @@
+[Unit]
+Description=ESP32 Prometheus Exporter
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/esp32_prometheus_exporter
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
