@@ -3,9 +3,7 @@ package main
 import (
         "net/http"
         "time"
-        "net"
         "fmt"
-        "errors"
 
         "github.com/prometheus/client_golang/prometheus"
         "github.com/prometheus/client_golang/prometheus/promhttp"
@@ -13,28 +11,13 @@ import (
         "github.com/ESP32-Zephyr/esp32_zephyr_goapi/api"
 )
 
-func resolveHost(host string) (string, error) {
-    ips, err := net.LookupIP(host)
-    if err != nil {
-        return "", err
-    }
-
-    for _, ip := range ips {
-        if ipv4 := ip.To4(); ipv4 != nil {
-            return ipv4.String(), nil
-        }
-    }
-
-    return "", errors.New("no IPv4 address found")
-}
-
 func getMetrics(transport, host string, destPort uint16, samplingPeriod time.Duration) {
         gaugeAdcChs := []prometheus.Gauge{}
 
         var ipv4 string
         var err error
         for {
-                ipv4, err = resolveHost(host)
+                ipv4, err = api.ResolveHost(host)
                 if err != nil {
                         fmt.Println("Error resolving host:", err)
                         time.Sleep(5 * time.Second)
@@ -79,7 +62,6 @@ func getMetrics(transport, host string, destPort uint16, samplingPeriod time.Dur
                 gaugeAdcChs = append(gaugeAdcChs, adcGauge)
                 prometheus.MustRegister(adcGauge)
         }
-
 
         for{
                 for id, gaugeAdcCh := range gaugeAdcChs {

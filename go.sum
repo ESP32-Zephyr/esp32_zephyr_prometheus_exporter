@@ -1,5 +1,5 @@
-github.com/ESP32-Zephyr/esp32_zephyr_goapi v1.0.1 h1:6MPg4+dxoPiGLNZ3OaUgcKrC1Z3Bddr9JWgJ2SEdTQg=
-github.com/ESP32-Zephyr/esp32_zephyr_goapi v1.0.1/go.mod h1:jd01T2tFKDcgz6hiCKNx2388mOe+K8mlP0g79ELZVN8=
+github.com/ESP32-Zephyr/esp32_zephyr_goapi v1.0.2 h1:ra1Lf6Phpvc5wAkoLbmwmyi6MtXpo3FMPfq+eifiRsc=
+github.com/ESP32-Zephyr/esp32_zephyr_goapi v1.0.2/go.mod h1:jd01T2tFKDcgz6hiCKNx2388mOe+K8mlP0g79ELZVN8=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=

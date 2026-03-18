@@ -3,7 +3,7 @@ module test
 go 1.24.5
 
 require (
-	github.com/ESP32-Zephyr/esp32_zephyr_goapi v1.0.1
+	github.com/ESP32-Zephyr/esp32_zephyr_goapi v1.0.2
 	github.com/prometheus/client_golang v1.23.2
 )
 
